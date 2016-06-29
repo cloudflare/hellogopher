@@ -17,7 +17,12 @@ clean:
 
 test: .GOPATH
 	go test -v -i -race $(call allpackages) # install -race libraries
+ifndef CI
 	go test -race $(call allpackages)
+else
+	@mkdir -p .GOPATH/test
+	go test -v -race $(call allpackages) | tee .GOPATH/test/output.txt
+endif
 
 list: .GOPATH
 	@echo $(call allpackages)
@@ -32,7 +37,11 @@ cover: bin/gocovmerge .GOPATH
 			$$MOD 2>&1 | grep -v "no packages being tested depend on" || exit 1; \
 	done
 	./bin/gocovmerge .GOPATH/cover/*.out > .GOPATH/cover/all.merged
+ifndef CI
 	go tool cover -html .GOPATH/cover/all.merged
+else
+	go tool cover -html .GOPATH/cover/all.merged -o .GOPATH/cover/all.html
+endif
 	@echo ""
 	@echo "=====> Total test coverage: <====="
 	@go tool cover -func .GOPATH/cover/all.merged
