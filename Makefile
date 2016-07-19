@@ -16,23 +16,23 @@ clean:
 	rm -rf bin .GOPATH
 
 test: .GOPATH/.ok
-	go test -v -i -race $(call allpackages) # install -race libraries
+	go test -v -i -race $(allpackages) # install -race libraries
 ifndef CI
-	go test -race $(call allpackages)
+	go test -race $(allpackages)
 else
 	@mkdir -p .GOPATH/test
-	go test -v -race $(call allpackages) | tee .GOPATH/test/output.txt
+	go test -v -race $(allpackages) | tee .GOPATH/test/output.txt
 endif
 
 list: .GOPATH/.ok
-	@echo $(call allpackages)
+	@echo $(allpackages)
 
 cover: bin/gocovmerge .GOPATH/.ok
 	rm -f .GOPATH/cover/*.out .GOPATH/cover/all.merged
 	@mkdir -p .GOPATH/cover
 	@echo "-- go test -coverpkg=./... -coverprofile=.GOPATH/cover/... ./..."
-	@for MOD in $(call allpackages); do \
-		go test -coverpkg=`echo $(call allpackages)|tr " " ","` \
+	@for MOD in $(allpackages); do \
+		go test -coverpkg=`echo $(allpackages)|tr " " ","` \
 			-coverprofile=.GOPATH/cover/unit-`echo $$MOD|tr "/" "_"`.out \
 			$$MOD 2>&1 | grep -v "no packages being tested depend on" || exit 1; \
 	done
