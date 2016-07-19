@@ -1,4 +1,5 @@
-IMPORT_PATH      := github.com/FiloSottile/helloworld
+IMPORT_PATH := github.com/FiloSottile/helloworld
+V := 1 # print commands and build progress by default
 
 .PHONY: all
 all: hello
@@ -6,47 +7,47 @@ all: hello
 .PHONY: hello bin/hello
 hello: bin/hello
 bin/hello: .GOPATH/.ok
-	go install $(VERSION_FLAGS) -v $(IMPORT_PATH)/cmd/hello
+	$Q go install $(if $V,-v) $(VERSION_FLAGS) $(IMPORT_PATH)/cmd/hello
 
 ##### =====> Utility targets <===== #####
 
 .PHONY: clean test list cover format
 
 clean:
-	rm -rf bin .GOPATH
+	$Q rm -rf bin .GOPATH
 
 test: .GOPATH/.ok
-	go test -v -i -race $(allpackages) # install -race libraries
+	$Q go test $(if $V,-v) -i -race $(allpackages) # install -race libs to speed up next run
 ifndef CI
-	go test -race $(allpackages)
+	$Q go test -race $(allpackages)
 else
-	go test -v -race $(allpackages) | tee .GOPATH/test/output.txt
+	$Q go test -v -race $(allpackages) | tee .GOPATH/test/output.txt
 endif
 
 list: .GOPATH/.ok
 	@echo $(allpackages)
 
 cover: bin/gocovmerge .GOPATH/.ok
-	rm -f .GOPATH/cover/*.out .GOPATH/cover/all.merged
-	@echo "-- go test -coverpkg=./... -coverprofile=.GOPATH/cover/... ./..."
-	for MOD in $(allpackages); do \
+	$Q rm -f .GOPATH/cover/*.out .GOPATH/cover/all.merged
+	$(if $V,@echo "-- go test -coverpkg=./... -coverprofile=.GOPATH/cover/... ./...")
+	$Q for MOD in $(allpackages); do \
 		go test -coverpkg=`echo $(allpackages)|tr " " ","` \
 			-coverprofile=.GOPATH/cover/unit-`echo $$MOD|tr "/" "_"`.out \
 			$$MOD 2>&1 | grep -v "no packages being tested depend on" || exit 1; \
 	done
-	./bin/gocovmerge .GOPATH/cover/*.out > .GOPATH/cover/all.merged
+	$Q ./bin/gocovmerge .GOPATH/cover/*.out > .GOPATH/cover/all.merged
 ifndef CI
-	go tool cover -html .GOPATH/cover/all.merged
+	$Q go tool cover -html .GOPATH/cover/all.merged
 else
-	go tool cover -html .GOPATH/cover/all.merged -o .GOPATH/cover/all.html
+	$Q go tool cover -html .GOPATH/cover/all.merged -o .GOPATH/cover/all.html
 endif
 	@echo ""
 	@echo "=====> Total test coverage: <====="
 	@echo ""
-	go tool cover -func .GOPATH/cover/all.merged
+	$Q go tool cover -func .GOPATH/cover/all.merged
 
 format: bin/goimports .GOPATH/.ok
-	ls .GOPATH/src/$(IMPORT_PATH)/**/*.go | grep -v /vendor/ | xargs ./bin/goimports -w
+	$Q ls .GOPATH/src/$(IMPORT_PATH)/**/*.go | grep -v /vendor/ | xargs ./bin/goimports -w
 
 ##### =====> Internals <===== #####
 
@@ -61,16 +62,18 @@ allpackages = $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
 
 export GOPATH := $(CURDIR)/.GOPATH
 
+Q := $(if $V,,@)
+
 .GOPATH/.ok:
-	mkdir -p "$(dir .GOPATH/src/$(IMPORT_PATH))"
-	ln -s ../../../.. ".GOPATH/src/$(IMPORT_PATH)"
-	mkdir -p .GOPATH/test .GOPATH/cover
-	mkdir -p bin
-	ln -s ../bin .GOPATH/bin
-	touch $@
+	$Q mkdir -p "$(dir .GOPATH/src/$(IMPORT_PATH))"
+	$Q ln -s ../../../.. ".GOPATH/src/$(IMPORT_PATH)"
+	$Q mkdir -p .GOPATH/test .GOPATH/cover
+	$Q mkdir -p bin
+	$Q ln -s ../bin .GOPATH/bin
+	$Q touch $@
 
 .PHONY: bin/gocovmerge bin/goimports
 bin/gocovmerge: .GOPATH/.ok
-	go install $(IMPORT_PATH)/vendor/github.com/wadey/gocovmerge
+	$Q go install $(IMPORT_PATH)/vendor/github.com/wadey/gocovmerge
 bin/goimports: .GOPATH/.ok
-	go install $(IMPORT_PATH)/vendor/golang.org/x/tools/cmd/goimports
+	$Q go install $(IMPORT_PATH)/vendor/golang.org/x/tools/cmd/goimports
