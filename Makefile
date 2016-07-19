@@ -5,7 +5,7 @@ all: hello
 
 .PHONY: hello bin/hello
 hello: bin/hello
-bin/hello: .GOPATH
+bin/hello: .GOPATH/.ok
 	go install $(VERSION_FLAGS) -v $(IMPORT_PATH)/cmd/hello
 
 ##### =====> Utility targets <===== #####
@@ -15,7 +15,7 @@ bin/hello: .GOPATH
 clean:
 	rm -rf bin .GOPATH
 
-test: .GOPATH
+test: .GOPATH/.ok
 	go test -v -i -race $(call allpackages) # install -race libraries
 ifndef CI
 	go test -race $(call allpackages)
@@ -24,10 +24,10 @@ else
 	go test -v -race $(call allpackages) | tee .GOPATH/test/output.txt
 endif
 
-list: .GOPATH
+list: .GOPATH/.ok
 	@echo $(call allpackages)
 
-cover: bin/gocovmerge .GOPATH
+cover: bin/gocovmerge .GOPATH/.ok
 	rm -f .GOPATH/cover/*.out .GOPATH/cover/all.merged
 	@mkdir -p .GOPATH/cover
 	@echo "-- go test -coverpkg=./... -coverprofile=.GOPATH/cover/... ./..."
@@ -46,7 +46,7 @@ endif
 	@echo "=====> Total test coverage: <====="
 	@go tool cover -func .GOPATH/cover/all.merged
 
-format: bin/goimports .GOPATH
+format: bin/goimports .GOPATH/.ok
 	ls .GOPATH/src/$(IMPORT_PATH)/**/*.go | grep -v /vendor/ | xargs ./bin/goimports -w
 
 ##### =====> Internals <===== #####
@@ -62,14 +62,15 @@ allpackages = $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
 
 export GOPATH := $(CURDIR)/.GOPATH
 
-.GOPATH:
+.GOPATH/.ok:
 	mkdir -p "$(dir .GOPATH/src/$(IMPORT_PATH))"
 	ln -s ../../../.. ".GOPATH/src/$(IMPORT_PATH)"
 	mkdir -p bin
 	ln -s ../bin .GOPATH/bin
+	touch $@
 
 .PHONY: bin/gocovmerge bin/goimports
-bin/gocovmerge: .GOPATH
+bin/gocovmerge: .GOPATH/.ok
 	go install $(IMPORT_PATH)/vendor/github.com/wadey/gocovmerge
-bin/goimports: .GOPATH
+bin/goimports: .GOPATH/.ok
 	go install $(IMPORT_PATH)/vendor/golang.org/x/tools/cmd/goimports
