@@ -20,7 +20,6 @@ test: .GOPATH/.ok
 ifndef CI
 	go test -race $(allpackages)
 else
-	@mkdir -p .GOPATH/test
 	go test -v -race $(allpackages) | tee .GOPATH/test/output.txt
 endif
 
@@ -29,9 +28,8 @@ list: .GOPATH/.ok
 
 cover: bin/gocovmerge .GOPATH/.ok
 	rm -f .GOPATH/cover/*.out .GOPATH/cover/all.merged
-	@mkdir -p .GOPATH/cover
 	@echo "-- go test -coverpkg=./... -coverprofile=.GOPATH/cover/... ./..."
-	@for MOD in $(allpackages); do \
+	for MOD in $(allpackages); do \
 		go test -coverpkg=`echo $(allpackages)|tr " " ","` \
 			-coverprofile=.GOPATH/cover/unit-`echo $$MOD|tr "/" "_"`.out \
 			$$MOD 2>&1 | grep -v "no packages being tested depend on" || exit 1; \
@@ -44,7 +42,8 @@ else
 endif
 	@echo ""
 	@echo "=====> Total test coverage: <====="
-	@go tool cover -func .GOPATH/cover/all.merged
+	@echo ""
+	go tool cover -func .GOPATH/cover/all.merged
 
 format: bin/goimports .GOPATH/.ok
 	ls .GOPATH/src/$(IMPORT_PATH)/**/*.go | grep -v /vendor/ | xargs ./bin/goimports -w
@@ -65,6 +64,7 @@ export GOPATH := $(CURDIR)/.GOPATH
 .GOPATH/.ok:
 	mkdir -p "$(dir .GOPATH/src/$(IMPORT_PATH))"
 	ln -s ../../../.. ".GOPATH/src/$(IMPORT_PATH)"
+	mkdir -p .GOPATH/test .GOPATH/cover
 	mkdir -p bin
 	ln -s ../bin .GOPATH/bin
 	touch $@
