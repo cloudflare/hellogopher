@@ -1,5 +1,6 @@
 IMPORT_PATH := github.com/FiloSottile/helloworld
 V := 1 # print commands and build progress by default
+IGNORED_PACKAGES := /vendor/ # space separated patterns
 
 .PHONY: all
 all: hello
@@ -49,7 +50,7 @@ endif
 	$Q go tool cover -func .GOPATH/cover/all.merged
 
 format: bin/goimports .GOPATH/.ok
-	$Q ls .GOPATH/src/$(IMPORT_PATH)/**/*.go | grep -v /vendor/ | xargs ./bin/goimports -w
+	$Q ls .GOPATH/src/$(IMPORT_PATH)/**/*.go | grep -v -e "^$$" $(foreach i,$(IGNORED_PACKAGES),-e $i) | xargs ./bin/goimports -w
 
 ##### =====> Internals <===== #####
 
@@ -60,7 +61,8 @@ VERSION_FLAGS    := -ldflags='-X "main.Version=$(VERSION)" -X "main.BuildTime=$(
 # cd into the GOPATH to workaround ./... not following symlinks
 allpackages = $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
     GOPATH=$(CURDIR)/.GOPATH go list ./... 2>&1 1>&3 | \
-    grep -v /vendor/ 1>&2 ) 3>&1 | grep -v /vendor/)
+    grep -v -e "^$$" $(foreach i,$(IGNORED_PACKAGES),-e $i) 1>&2 ) 3>&1 | \
+    grep -v -e "^$$" $(foreach i,$(IGNORED_PACKAGES),-e $i))
 
 export GOPATH := $(CURDIR)/.GOPATH
 
