@@ -20,10 +20,10 @@ test: .GOPATH/.ok
 	$Q go test $(if $V,-v) -i -race $(allpackages) # install -race libs to speed up next run
 ifndef CI
 	$Q go vet $(allpackages)
-	$Q go test -race $(allpackages)
+	$Q GODEBUG=cgocheck=2 go test -race $(allpackages)
 else
 	$Q go vet $(allpackages) | tee .GOPATH/test/vet.txt
-	$Q go test -v -race $(allpackages) | tee .GOPATH/test/output.txt
+	$Q GODEBUG=cgocheck=2 go test -v -race $(allpackages) | tee .GOPATH/test/output.txt
 endif
 
 list: .GOPATH/.ok
