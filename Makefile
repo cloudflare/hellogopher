@@ -50,7 +50,7 @@ endif
 	$Q go tool cover -func .GOPATH/cover/all.merged
 
 format: bin/goimports .GOPATH/.ok
-	$Q ls .GOPATH/src/$(IMPORT_PATH)/**/*.go | grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)) | xargs ./bin/goimports -w
+	$Q find .GOPATH/src/$(IMPORT_PATH)/ -iname \*.go | grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)) | xargs ./bin/goimports -w
 
 ##### =====> Internals <===== #####
 
