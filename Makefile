@@ -58,11 +58,11 @@ VERSION          := $(shell git describe --tags --always --dirty="-dev")
 DATE             := $(shell date '+%Y-%m-%d-%H%M UTC')
 VERSION_FLAGS    := -ldflags='-X "main.Version=$(VERSION)" -X "main.BuildTime=$(DATE)"'
 
-# cd into the GOPATH to workaround ./... not following symlinks
-allpackages = $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
+# cd into the GOPATH to workaround ./... not following symlinks (lazily computed)
+allpackages = $(eval allpackages := $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
     GOPATH=$(CURDIR)/.GOPATH go list ./... 2>&1 1>&3 | \
     grep -v -e "^$$" $(foreach i,$(IGNORED_PACKAGES),-e $i) 1>&2 ) 3>&1 | \
-    grep -v -e "^$$" $(foreach i,$(IGNORED_PACKAGES),-e $i))
+    grep -v -e "^$$" $(foreach i,$(IGNORED_PACKAGES),-e $i)))$(allpackages)
 
 export GOPATH := $(CURDIR)/.GOPATH
 
