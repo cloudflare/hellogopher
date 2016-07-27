@@ -50,7 +50,7 @@ endif
 	$Q go tool cover -func .GOPATH/cover/all.merged
 
 format: bin/goimports .GOPATH/.ok
-	$Q ls .GOPATH/src/$(IMPORT_PATH)/**/*.go | grep -v -e "^$$" $(foreach i,$(IGNORED_PACKAGES),-e $i) | xargs ./bin/goimports -w
+	$Q ls .GOPATH/src/$(IMPORT_PATH)/**/*.go | grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)) | xargs ./bin/goimports -w
 
 ##### =====> Internals <===== #####
 
@@ -61,8 +61,8 @@ VERSION_FLAGS    := -ldflags='-X "main.Version=$(VERSION)" -X "main.BuildTime=$(
 # cd into the GOPATH to workaround ./... not following symlinks (lazily computed)
 allpackages = $(eval allpackages := $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
     GOPATH=$(CURDIR)/.GOPATH go list ./... 2>&1 1>&3 | \
-    grep -v -e "^$$" $(foreach i,$(IGNORED_PACKAGES),-e $i) 1>&2 ) 3>&1 | \
-    grep -v -e "^$$" $(foreach i,$(IGNORED_PACKAGES),-e $i)))$(allpackages)
+    grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)) 1>&2 ) 3>&1 | \
+    grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES))))$(allpackages)
 
 export GOPATH := $(CURDIR)/.GOPATH
 
