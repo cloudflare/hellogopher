@@ -59,10 +59,15 @@ DATE             := $(shell date '+%Y-%m-%d-%H%M UTC')
 VERSION_FLAGS    := -ldflags='-X "main.Version=$(VERSION)" -X "main.BuildTime=$(DATE)"'
 
 # cd into the GOPATH to workaround ./... not following symlinks (lazily computed)
-allpackages = $(eval allpackages := $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
+allpackages = $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
     GOPATH=$(CURDIR)/.GOPATH go list ./... 2>&1 1>&3 | \
     grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)) 1>&2 ) 3>&1 | \
-    grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES))))$(allpackages)
+    grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)))
+
+# memoize allpackages
+set=$(eval $1:=$2)$2
+make-lazy=$(eval $1=$$(call set,$1,$(value $1)))
+$(call make-lazy,allpackages)
 
 export GOPATH := $(CURDIR)/.GOPATH
 
