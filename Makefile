@@ -5,9 +5,8 @@ IGNORED_PACKAGES := /vendor/ # space separated patterns
 .PHONY: all
 all: hello
 
-.PHONY: hello bin/hello
-hello: bin/hello
-bin/hello: .GOPATH/.ok
+.PHONY: hello
+hello: .GOPATH/.ok
 	$Q go install $(if $V,-v) $(VERSION_FLAGS) $(IMPORT_PATH)/cmd/hello
 
 ##### =====> Utility targets <===== #####
