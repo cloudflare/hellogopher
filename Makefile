@@ -57,16 +57,14 @@ VERSION          := $(shell git describe --tags --always --dirty="-dev")
 DATE             := $(shell date '+%Y-%m-%d-%H%M UTC')
 VERSION_FLAGS    := -ldflags='-X "main.Version=$(VERSION)" -X "main.BuildTime=$(DATE)"'
 
-# cd into the GOPATH to workaround ./... not following symlinks (lazily computed)
+# cd into the GOPATH to workaround ./... not following symlinks
 allpackages = $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
     GOPATH=$(CURDIR)/.GOPATH go list ./... 2>&1 1>&3 | \
     grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)) 1>&2 ) 3>&1 | \
     grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)))
 
-# memoize allpackages
-set=$(eval $1:=$2)$2
-make-lazy=$(eval $1=$$(call set,$1,$(value $1)))
-$(call make-lazy,allpackages)
+# memoize allpackages, so that it's executed only once and only if used
+$(eval allpackages=$$(eval allpackages:=$(value allpackages))$$(value allpackages))
 
 export GOPATH := $(CURDIR)/.GOPATH
 
