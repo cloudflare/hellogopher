@@ -56,7 +56,7 @@ format: bin/goimports .GOPATH/.ok
 ##### =====> Internals <===== #####
 
 VERSION          := $(shell git describe --tags --always --dirty="-dev")
-DATE             := $(shell date '+%Y-%m-%d-%H%M UTC')
+DATE             := $(shell date -u '+%Y-%m-%d-%H%M UTC')
 VERSION_FLAGS    := -ldflags='-X "main.Version=$(VERSION)" -X "main.BuildTime=$(DATE)"'
 
 # cd into the GOPATH to workaround ./... not following symlinks
