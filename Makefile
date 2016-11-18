@@ -1,13 +1,21 @@
+# The import path is the unique absolute name of your repository.
+# All subpackages should always be imported as relative to it.
+# If you change this, run `make clean`.
 IMPORT_PATH := github.com/FiloSottile/helloworld
-V := 1 # print commands and build progress by default
-IGNORED_PACKAGES := /vendor/ # space separated patterns
+
+V := 1 # When V is 1, print commands and build progress.
+
+# Space separated patterns of packages to skip in list, test, format.
+IGNORED_PACKAGES := /vendor/
 
 .PHONY: all
 all: hello
 
 .PHONY: hello
 hello: .GOPATH/.ok
-	$Q go install $(if $V,-v) $(VERSION_FLAGS) $(IMPORT_PATH)/cmd/hello
+	$Q go install $(if $V,-v) $(VERSION_FLAGS) github.com/FiloSottile/helloworld/cmd/hello
+
+##### ^^^^^^ EDIT ABOVE ^^^^^^ #####
 
 ##### =====> Utility targets <===== #####
 
