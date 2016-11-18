@@ -63,6 +63,17 @@ format: bin/goimports .GOPATH/.ok
 
 ##### =====> Internals <===== #####
 
+.PHONY: setup
+setup:
+	@if grep "/.GOPATH" .gitignore > /dev/null 2>&1; then \
+	    echo "This project seems already set up."; exit 1; fi
+	@if ! which gvt > /dev/null; then echo "You need gvt to run the automated setup."; \
+	    echo "Install it with: go get -u github.com/FiloSottile/gvt"; exit 1; fi
+	gvt fetch golang.org/x/tools/cmd/goimports
+	gvt fetch github.com/wadey/gocovmerge
+	echo "/.GOPATH" >> .gitignore
+	echo "/bin" >> .gitignore
+
 VERSION          := $(shell git describe --tags --always --dirty="-dev")
 DATE             := $(shell date -u '+%Y-%m-%d-%H%M UTC')
 VERSION_FLAGS    := -ldflags='-X "main.Version=$(VERSION)" -X "main.BuildTime=$(DATE)"'
