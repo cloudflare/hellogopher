@@ -64,10 +64,6 @@ The system GOPATH is ignored, so only vendored dependencies are used.
 
 It installs the race libraries (in the hidden GOPATH) just so it does not have to compile them the next time.
 
-#### CI mode
-
-If the environment variable `CI` is set to 1, full verbose output is both sent to stdout/stderr, and saved in `.GOPATH/test/vet.txt` and `.GOPATH/test/output.txt`.
-
 ### make cover
 
 `make cover` aggregates the coverage of all tests over all packages. That is, it runs the test suite of all packages, each time collecting the coverage over all packages, and then aggregates all those reports into one.
@@ -76,13 +72,17 @@ It prints detailed statistics and opens the full HTML report in the browser.
 
 *Note: `make cover` does not exit 1 on failure.*
 
-#### CI mode
-
-If the environment variable `CI` is set to 1, the HTML report is saved in `.GOPATH/cover/all.html`.
-
 ### make format
 
 `make format` runs `goimports` on all non-ignored packages.
+
+### CI mode
+
+CI mode is enabled if the environment variable `CI` is set to 1.
+
+The `make test` full verbose output is both sent to stdout/stderr, and saved in `.GOPATH/test/vet.txt` and `.GOPATH/test/output.txt`.
+
+The `make cover` HTML report is saved in `.GOPATH/cover/all.html`.
 
 ### Cross-compiling
 
