@@ -64,13 +64,12 @@ format: bin/goimports .GOPATH/.ok
 ##### =====> Internals <===== #####
 
 .PHONY: setup
-setup:
+setup: .GOPATH/.ok
 	@if grep "/.GOPATH" .gitignore > /dev/null 2>&1; then \
 	    echo "This project seems already set up."; exit 1; fi
-	@if ! which gvt > /dev/null; then echo "You need gvt to run the automated setup."; \
-	    echo "Install it with: go get -u github.com/FiloSottile/gvt"; exit 1; fi
-	gvt fetch golang.org/x/tools/cmd/goimports
-	gvt fetch github.com/wadey/gocovmerge
+	go get -u github.com/FiloSottile/gvt
+	./bin/gvt fetch golang.org/x/tools/cmd/goimports
+	./bin/gvt fetch github.com/wadey/gocovmerge
 	echo "/.GOPATH" >> .gitignore
 	echo "/bin" >> .gitignore
 
