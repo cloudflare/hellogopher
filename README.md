@@ -20,13 +20,20 @@ $ make cover
 
 You can now just clone the repository anywhere, and `make` it. `go get` still works as usual.
 
+If you get `cannot find package` errors, you need to read the next section.
+
 ## Vendoring
 
-A hellogopher project uses the official Go vendoring style: third-party packages go in `vendor/`, like `vendor/github.com/fatih/color`. The Makefile will intentionally ignore your system GOPATH to force you to vendor.
+A hellogopher project uses the official Go vendoring style: third-party packages go in `./vendor/`, like `./vendor/github.com/fatih/color`. The Makefile will intentionally ignore your system GOPATH to force you to vendor.
 
-Hellogopher has no opinions on how you populate the vendor folder, but a tool that is guaranteed to work as flexibly as hellogopher is [gvt](https://github.com/FiloSottile/gvt).
+Hellogopher has no opinions on how you populate the vendor folder, but a tool that is guaranteed to work as flexibly as hellogopher is [gvt](https://github.com/FiloSottile/gvt). If you use `make setup` you'll find gvt in `./bin/gvt`.
 
 Don't forget to check the vendor folder into your VCS.
+
+```
+$ ./bin/gvt fetch github.com/fatih/color
+$ git add vendor/
+```
 
 ## Using other tools
 

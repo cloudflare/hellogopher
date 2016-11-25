@@ -64,7 +64,7 @@ format: bin/goimports .GOPATH/.ok
 ##### =====> Internals <===== #####
 
 .PHONY: setup
-setup: .GOPATH/.ok
+setup: clean .GOPATH/.ok
 	@if ! grep "/.GOPATH" .gitignore > /dev/null 2>&1; then \
 	    echo "/.GOPATH" >> .gitignore; \
 	    echo "/bin" >> .gitignore; \
