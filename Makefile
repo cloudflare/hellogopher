@@ -65,13 +65,13 @@ format: bin/goimports .GOPATH/.ok
 
 .PHONY: setup
 setup: .GOPATH/.ok
-	@if grep "/.GOPATH" .gitignore > /dev/null 2>&1; then \
-	    echo "This project seems already set up."; exit 1; fi
+	@if ! grep "/.GOPATH" .gitignore > /dev/null 2>&1; then \
+	    echo "/.GOPATH" >> .gitignore; \
+	    echo "/bin" >> .gitignore; \
+	fi
 	go get -u github.com/FiloSottile/gvt
-	./bin/gvt fetch golang.org/x/tools/cmd/goimports
-	./bin/gvt fetch github.com/wadey/gocovmerge
-	echo "/.GOPATH" >> .gitignore
-	echo "/bin" >> .gitignore
+	- ./bin/gvt fetch golang.org/x/tools/cmd/goimports
+	- ./bin/gvt fetch github.com/wadey/gocovmerge
 
 VERSION          := $(shell git describe --tags --always --dirty="-dev")
 DATE             := $(shell date -u '+%Y-%m-%d-%H%M UTC')
