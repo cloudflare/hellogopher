@@ -6,7 +6,7 @@ Hellogopher is a Makefile that makes your conventional Go project build from any
 
 ```
 $ cp ../hellogopher/Makefile .
-$ $EDITOR Makefile
+$ $EDITOR Makefile # modify IMPORT_PATH
 $ make setup
 $ git add Makefile .gitignore vendor/
 
@@ -20,7 +20,17 @@ $ make cover
 
 You can now just clone the repository anywhere, and `make` it. `go get` still works as usual.
 
-If you get `cannot find package` errors, you need to read the next section.
+If you get `cannot find package` errors, you need to read the *Vendoring* section.
+
+### What is `IMPORT_PATH`?
+
+`IMPORT_PATH` is the absolute unique name of your repository. It's usually where it can be found, too. For example `github.com/FiloSottile/example`.
+
+You use the `IMPORT_PATH` any time you want to refer to your code: in the Makefile, with `import`, with `go get`.
+
+If your `IMPORT_PATH` is `github.com/FiloSottile/example`, the code in the root of your repository is `github.com/FiloSottile/example` (and it will compile to a binary named `example`), the code in the folder `foo` is `github.com/FiloSottile/example/foo`, `cmd/bar` is `github.com/FiloSottile/example/cmd/bar`, and so on.
+
+If you change the `IMPORT_PATH` you have to run `make clean`.
 
 ## Vendoring
 
@@ -35,9 +45,9 @@ $ ./bin/gvt fetch github.com/fatih/color
 $ git add vendor/
 ```
 
-## Using other tools
+## Using editors and other tools
 
-All the tools used by the Makefile have been vetted and fixed to work out of the box. However, most other tools (`gometalinter`, `guru`, maybe your editor, ...) are very likely not to work unless you place the repository in `$GOPATH/src/$IMPORT_PATH`.
+All the tools used by the Makefile have been vetted and fixed to work out of the box. However, most other tools (`gometalinter`, `guru`, ...) and editors are very likely not to work unless you place the repository at `$GOPATH/src/$IMPORT_PATH`.
 
 ## Why
 

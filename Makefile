@@ -1,7 +1,7 @@
-# The import path is the unique absolute name of your repository.
-# All subpackages should always be imported as relative to it.
+# The import path is where your repository can be found.
+# Any subpackage should be imported as relative to it.
 # If you change this, run `make clean`.
-IMPORT_PATH := github.com/FiloSottile/helloworld
+IMPORT_PATH := github.com/FiloSottile/example
 
 V := 1 # When V is 1, print commands and build progress.
 
@@ -9,11 +9,15 @@ V := 1 # When V is 1, print commands and build progress.
 IGNORED_PACKAGES := /vendor/
 
 .PHONY: all
-all: hello
+all: build
 
-.PHONY: hello
-hello: .GOPATH/.ok
-	$Q go install $(if $V,-v) $(VERSION_FLAGS) github.com/FiloSottile/helloworld/cmd/hello
+.PHONY: build
+build: .GOPATH/.ok
+	$Q go install $(if $V,-v) $(VERSION_FLAGS) $(IMPORT_PATH)
+
+# .PHONY: otherbin
+# otherbin: .GOPATH/.ok
+# 	$Q go install $(if $V,-v) $(VERSION_FLAGS) $(IMPORT_PATH)/cmd/otherbin
 
 ##### ^^^^^^ EDIT ABOVE ^^^^^^ #####
 
