@@ -129,8 +129,7 @@ If you need to `go build` a `.go` file instead of a package, first stop and thin
 go build $(GOPATH)/src/$(IMPORT_PATH)/my/go/file.go
 ```
 
-To run the Makefile quietly, remove the `V := 1` line at the top of the Makefile.
-You can then use `make $TARGET V=1` to re-enable printing commands and build progress.
+To run the Makefile verbosely, **printing commands and build progress**, set `V := 1` at the top of the Makefile. You can use `make $TARGET V=1` and `make $TARGET V=` to control this on a per-call basis.
 
 ## How does this work?
 

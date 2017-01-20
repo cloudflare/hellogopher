@@ -3,7 +3,7 @@
 # If you change this, run `make clean`.
 IMPORT_PATH := example.com/hellogopher/subdirs
 
-V := 1 # When V is 1, print commands and build progress.
+# V := 1 # When V is 1, print commands and build progress.
 
 # Space separated patterns of packages to skip in list, test, format.
 IGNORED_PACKAGES := /vendor/
