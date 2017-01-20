@@ -5,7 +5,7 @@ Hellogopher is a Makefile that makes your conventional Go project build from any
 ## Quickstart
 
 ```
-$ cp ../hellogopher/Makefile .
+$ wget https://raw.githubusercontent.com/cloudflare/hellogopher/master/Makefile
 $ $EDITOR Makefile # modify IMPORT_PATH
 $ make setup
 $ git add Makefile .gitignore vendor/
