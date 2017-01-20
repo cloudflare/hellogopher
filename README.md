@@ -49,6 +49,8 @@ $ git add vendor/
 
 All the tools used by the Makefile have been vetted and fixed to work out of the box. However, most other tools (`gometalinter`, `guru`, ...) and editors are very likely not to work unless you place the repository at `$GOPATH/src/$IMPORT_PATH`.
 
+The point of hellogopher is not to be an universal wrapper or the only tool you use, but to get you started easily before you learn GOPATH.
+
 ## Why
 
 Go developers should know and use GOPATH. But at Cloudflare we noticed it was the main cause of friction for novice or casual Go users. They expect to just clone a repository anywhere, and be able to build it.
@@ -105,25 +107,21 @@ The `make cover` HTML report is saved in `.GOPATH/cover/all.html`.
 
 You can cross-compile easily with `GOOS=linux make`. The generated binary will end up in `bin/OS_ARCH/`, like `bin/linux_amd64/hello`.
 
+Hellogopher works nicely also if you share a folder between architectures, for example with Docker for Mac.
+
 ## Tips and FAQ
 
-Don't use relative imports (the ones starting with `./`). Just don't. No, really.
+Don't use **relative imports** (the ones starting with `./`). Just don't. No, really.
 
-Binary targets are .PHONY because hellogopher uses the Go native incremental build support.
+Binary targets are **.PHONY** because hellogopher uses the Go native incremental build support.
 
-If your `package main` is in the repository root and not in a subfolder, the binary will be named after the repository name. To build it add a Makefile target like this:
+Binaries will be **named after the folder they are in**. If your `package main` is in the repository root and not in a subfolder, the binary will be named after the repository name. This is a fundamental concept of Go.
 
-```make
-.PHONY: hellogopher
-hellogopher: .GOPATH/.ok
-	$Q go install $(if $V,-v) $(VERSION_FLAGS) $(IMPORT_PATH)
-```
+To **exclude a package** from `make test`/`cover`/`list`/`format` add its name (or a part of it) to `IGNORED_PACKAGES`. By default vendored packages are excluded. You might need to do this if you have 3rd party code outside of `vendor/`, too.
 
-To exclude a package from `make test`/`cover`/`list`/`format` add its name (or a part of it) to `IGNORED_PACKAGES`. By default vendored packages are excluded. You might need to do this if you have 3rd party code outside of `vendor/`, too.
+If you add Makefile binary targets don't forget the **`.GOPATH/.ok`** dependency.
 
-If you add Makefile binary targets don't forget the `.GOPATH/.ok` dependency.
-
-If you need to `go build` a `.go` file instead of a package, first stop and think if it shouldn't be a package instead.  Then if you insist build them like this:
+If you need to `go build` a lone **`.go` file** instead of a package, first stop and think if it shouldn't be a package instead.  Then if you insist build them like this:
 
 ```
 go build $(GOPATH)/src/$(IMPORT_PATH)/my/go/file.go
