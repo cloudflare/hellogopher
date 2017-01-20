@@ -31,12 +31,13 @@ list: .GOPATH/.ok
 	@echo $(allpackages)
 
 cover: bin/gocovmerge .GOPATH/.ok
+	@echo "NOTE: make cover does not exit 1 on failure, don't use it to check for tests success!"
 	$Q rm -f .GOPATH/cover/*.out .GOPATH/cover/all.merged
 	$(if $V,@echo "-- go test -coverpkg=./... -coverprofile=.GOPATH/cover/... ./...")
-	$Q for MOD in $(allpackages); do \
+	@for MOD in $(allpackages); do \
 		go test -coverpkg=`echo $(allpackages)|tr " " ","` \
 			-coverprofile=.GOPATH/cover/unit-`echo $$MOD|tr "/" "_"`.out \
-			$$MOD 2>&1 | grep -v "no packages being tested depend on" || exit 1; \
+			$$MOD 2>&1 | grep -v "no packages being tested depend on"; \
 	done
 	$Q ./bin/gocovmerge .GOPATH/cover/*.out > .GOPATH/cover/all.merged
 ifndef CI
