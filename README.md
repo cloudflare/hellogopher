@@ -5,11 +5,15 @@ Hellogopher is a Makefile that makes your conventional Go project build from any
 ## Quickstart
 
 ```
-$ wget https://raw.githubusercontent.com/cloudflare/hellogopher/master/Makefile
-$ $EDITOR Makefile # modify IMPORT_PATH
-$ make setup
-$ git add Makefile .gitignore vendor/
+wget https://raw.githubusercontent.com/cloudflare/hellogopher/master/Makefile
+$EDITOR Makefile # modify IMPORT_PATH
+make setup
+git add Makefile .gitignore vendor/
+```
 
+You can now just clone the repository anywhere, and `make` it. `go get` still works as usual.
+
+```
 $ make
 $ ./bin/hello
 Hello, world!
@@ -17,8 +21,6 @@ Hello, world!
 $ make test
 $ make cover
 ```
-
-You can now just clone the repository anywhere, and `make` it. `go get` still works as usual.
 
 If you get `cannot find package` errors, you need to read the *Vendoring* section.
 
@@ -43,8 +45,8 @@ Hellogopher has no opinions on how you populate the vendor folder, but a tool th
 Don't forget to check the vendor folder into your VCS.
 
 ```
-$ ./bin/gvt fetch github.com/fatih/color
-$ git add vendor/
+./bin/gvt fetch github.com/fatih/color
+git add vendor/
 ```
 
 ## Using editors and other tools
@@ -64,10 +66,10 @@ Still, a hellogopher project is just a **standard `go get`-able project**. Regul
 Hellogopher makes your install instructions look like this:
 
 ```
-$ go get -u github.com/FiloSottile/zcash-mini
+go get -u github.com/FiloSottile/zcash-mini
  - or -
-$ git clone https://github.com/FiloSottile/zcash-mini
-$ cd zcash-mini && make && sudo cp ./bin/zcash-mini /usr/local/bin/
+git clone https://github.com/FiloSottile/zcash-mini
+cd zcash-mini && make && sudo cp ./bin/zcash-mini /usr/local/bin/
 ```
 
 It achieves similar results to [gb](https://getgb.io/), but preserving the conventional structure of a Go project. It works similarly to the Camlistore build system but without the temporary copies.
