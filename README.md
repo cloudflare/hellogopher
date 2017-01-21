@@ -22,6 +22,8 @@ You can now just clone the repository anywhere, and `make` it. `go get` still wo
 
 If you get `cannot find package` errors, you need to read the *Vendoring* section.
 
+![demo](https://cloud.githubusercontent.com/assets/1225294/22173691/f2d297ce-dfca-11e6-910f-11b416e4e75a.gif)
+
 ### What is `IMPORT_PATH`?
 
 `IMPORT_PATH` is the absolute unique name of your repository. It's usually where it can be found, too. For example `github.com/FiloSottile/example`.
@@ -53,11 +55,20 @@ The point of hellogopher is not to be an universal wrapper or the only tool you 
 
 ## Why
 
-Go developers should know and use GOPATH. But at Cloudflare we noticed it was the main cause of friction for novice or casual Go users. They expect to just clone a repository anywhere, and be able to build it.
+Go developers should know and use GOPATH. But **it shouldn't be the first thing they are exposed to**. At Cloudflare we noticed it was the main cause of friction for novice or casual Go users. They expect to **just clone a repository anywhere, and be able to build it**.
 
 Hellogopher allows non-Go developers to easily build the project in any environment, and provides enough tools (`test`, `cover`, `format`) for the casual contributor.
 
-However, a hellogopher project is just a normal `go get`-able. Regular Go developers should place the repository at its proper place in the GOPATH, and still benefit from the convenience methods like `make cover` and the vendoring enforcement.
+Still, a hellogopher project is just a **standard `go get`-able project**. Regular Go developers should place the repository at its proper place in the GOPATH, so they can use all other tools that expect a GOPATH. (And they can still benefit from the convenience methods like `make cover` and the vendoring enforcement.)
+
+Hellogopher makes your install instructions look like this:
+
+```
+$ go get -u github.com/FiloSottile/zcash-mini
+ - or -
+$ git clone https://github.com/FiloSottile/zcash-mini
+$ cd zcash-mini && make && sudo cp ./bin/zcash-mini /usr/local/bin/
+```
 
 It achieves similar results to [gb](https://getgb.io/), but preserving the conventional structure of a Go project. It works similarly to the Camlistore build system but without the temporary copies.
 
@@ -71,7 +82,7 @@ A standard build target builds a binary and places it in `bin/`.
 
 Version and build time are injected at link time.
 
-All operations take full advantage of incremental builds.
+All operations take full advantage of **incremental builds**.
 
 The system GOPATH is ignored, so only vendored dependencies are used.
 
