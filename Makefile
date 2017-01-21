@@ -8,15 +8,34 @@ IMPORT_PATH := github.com/FiloSottile/example
 # Space separated patterns of packages to skip in list, test, format.
 IGNORED_PACKAGES := /vendor/
 
+# Will fail if setup has not been ran, and "make cover" or "make format" is used
+ifneq (,$(filter $(MAKECMDGOALS),cover format))
+define check_setup
+	@if ! grep "/.GOPATH" .gitignore > /dev/null 2>&1; then \
+		$(error Please run "make setup" to continue)
+	fi;
+endef
+
+# otherwise just give a warning
+else ifneq ($(MAKECMDGOALS),setup)
+define check_setup
+	@if ! grep "/.GOPATH" .gitignore > /dev/null 2>&1; then \
+		echo -e "WARNING: Full functionality not available without \"make setup\"\n";\
+	fi;
+endef
+endif
+
+
 .PHONY: all
 all: build
 
 .PHONY: build
-build: .GOPATH/.ok .GOPATH/.setup
+build: .GOPATH/.ok
+	$(call check_setup)
 	$Q go install $(if $V,-v) $(VERSION_FLAGS) $(IMPORT_PATH)
 
 # .PHONY: otherbin
-# otherbin: .GOPATH/.ok .GOPATH/.setup
+# otherbin: .GOPATH/.ok
 # 	$Q go install $(if $V,-v) $(VERSION_FLAGS) $(IMPORT_PATH)/cmd/otherbin
 
 ##### ^^^^^^ EDIT ABOVE ^^^^^^ #####
@@ -26,9 +45,11 @@ build: .GOPATH/.ok .GOPATH/.setup
 .PHONY: clean test list cover format
 
 clean:
+	$(call check_setup)
 	$Q rm -rf bin .GOPATH
 
-test: .GOPATH/.ok .GOPATH/.setup
+test: .GOPATH/.ok
+	$(call check_setup)
 	$Q go test $(if $V,-v) -i -race $(allpackages) # install -race libs to speed up next run
 ifndef CI
 	$Q go vet $(allpackages)
@@ -41,9 +62,11 @@ else
 endif
 
 list: .GOPATH/.ok
+	$(call check_setup)
 	@echo $(allpackages)
 
-cover: bin/gocovmerge .GOPATH/.ok .GOPATH/.setup
+cover: bin/gocovmerge .GOPATH/.ok
+	$(call check_setup)
 	@echo "NOTE: make cover does not exit 1 on failure, don't use it to check for tests success!"
 	$Q rm -f .GOPATH/cover/*.out .GOPATH/cover/all.merged
 	$(if $V,@echo "-- go test -coverpkg=./... -coverprofile=.GOPATH/cover/... ./...")
@@ -63,7 +86,8 @@ endif
 	@echo ""
 	$Q go tool cover -func .GOPATH/cover/all.merged
 
-format: bin/goimports .GOPATH/.ok .GOPATH/.setup
+format: bin/goimports .GOPATH/.ok
+	$(call check_setup)
 	$Q find .GOPATH/src/$(IMPORT_PATH)/ -iname \*.go | grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)) | xargs ./bin/goimports -w
 
 ##### =====> Internals <===== #####
@@ -77,7 +101,6 @@ setup: clean .GOPATH/.ok
 	go get -u github.com/FiloSottile/gvt
 	- ./bin/gvt fetch golang.org/x/tools/cmd/goimports
 	- ./bin/gvt fetch github.com/wadey/gocovmerge
-	$Q touch .GOPATH/.setup
 
 VERSION          := $(shell git describe --tags --always --dirty="-dev")
 DATE             := $(shell date -u '+%Y-%m-%d-%H%M UTC')
@@ -93,6 +116,7 @@ _allpackages = $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
 allpackages = $(if $(__allpackages),,$(eval __allpackages := $$(_allpackages)))$(__allpackages)
 
 export GOPATH := $(CURDIR)/.GOPATH
+
 Q := $(if $V,,@)
 
 .GOPATH/.ok:
@@ -102,12 +126,6 @@ Q := $(if $V,,@)
 	$Q mkdir -p bin
 	$Q ln -s ../bin .GOPATH/bin
 	$Q touch $@
-
-.GOPATH/.setup:
-	if [ -a ./bin/gvt ]; \
-		then \
-			$(error Please run "make setup" before continuing) \
-		fi
 
 .PHONY: bin/gocovmerge bin/goimports
 bin/gocovmerge: .GOPATH/.ok
