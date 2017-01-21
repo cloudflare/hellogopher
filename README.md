@@ -9,16 +9,18 @@ wget https://raw.githubusercontent.com/cloudflare/hellogopher/master/Makefile
 $EDITOR Makefile # modify IMPORT_PATH
 make setup
 git add Makefile .gitignore vendor/
-
-make
-./bin/hello
-Hello, world!
-
-make test
-make cover
 ```
 
 You can now just clone the repository anywhere, and `make` it. `go get` still works as usual.
+
+```
+$ make
+$ ./bin/hello
+Hello, world!
+
+$ make test
+$ make cover
+```
 
 If you get `cannot find package` errors, you need to read the *Vendoring* section.
 
