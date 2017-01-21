@@ -36,6 +36,8 @@ If your `IMPORT_PATH` is `github.com/FiloSottile/example`, the code in the root 
 
 If you change the `IMPORT_PATH` you have to run `make clean`.
 
+If you don't care about `go get`, for example if the code is **embedded inside some other non-Go codebase**, you can just pick an arbitrary one like `company.com/bigprogram/smallgotool`.
+
 ## Vendoring
 
 A hellogopher project uses the official Go vendoring style: third-party packages go in `./vendor/`, like `./vendor/github.com/fatih/color`. The Makefile will intentionally ignore your system GOPATH to force you to vendor.
