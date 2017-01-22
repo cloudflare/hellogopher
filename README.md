@@ -132,6 +132,8 @@ Binary targets are **.PHONY** because hellogopher uses the Go native incremental
 
 Binaries will be **named after the folder they are in**. If your `package main` is in the repository root and not in a subfolder, the binary will be named after the repository name. This is a fundamental concept of Go.
 
+**If code is not in the project root**, add the sub-path to `$(IMPORT_PATH)` in the build target. There's an example called `otherbin` in a new hellogopher. But a hellogopher project is just a normal Go project, so no need for `src/` folders!
+
 To **exclude a package** from `make test`/`cover`/`list`/`format` add its name (or a part of it) to `IGNORED_PACKAGES`. By default vendored packages are excluded. You might need to do this if you have 3rd party code outside of `vendor/`, too.
 
 If you add Makefile binary targets don't forget the **`.GOPATH/.ok`** dependency.
