@@ -1,6 +1,6 @@
 # The import path is where your repository can be found.
-# Any subpackage should be imported as relative to it.
-# If you change this, run `make clean`.
+# To import subpackages, always prepend the full import path.
+# If you change this, run `make clean`. Read more: https://git.io/vM7zV
 IMPORT_PATH := github.com/FiloSottile/example
 
 # V := 1 # When V is set, print commands and build progress.
@@ -109,3 +109,5 @@ bin/gocovmerge: .GOPATH/.ok
 	$Q go install $(IMPORT_PATH)/vendor/github.com/wadey/gocovmerge
 bin/goimports: .GOPATH/.ok
 	$Q go install $(IMPORT_PATH)/vendor/golang.org/x/tools/cmd/goimports
+
+# Based on https://github.com/cloudflare/hellogopher - v1.0
