@@ -65,7 +65,8 @@ endif
 	$Q go tool cover -func .GOPATH/cover/all.merged
 
 format: bin/goimports .GOPATH/.ok
-	$Q find .GOPATH/src/$(IMPORT_PATH)/ -iname \*.go | grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)) | xargs ./bin/goimports -w
+	$Q find .GOPATH/src/$(IMPORT_PATH)/ -iname \*.go | grep -v \
+	    -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)) | xargs ./bin/goimports -w
 
 ##### =====> Internals <===== #####
 
@@ -107,8 +108,12 @@ Q := $(if $V,,@)
 
 .PHONY: bin/gocovmerge bin/goimports
 bin/gocovmerge: .GOPATH/.ok
+	@test -d ./vendor/github.com/wadey/gocovmerge || \
+	    { echo "Vendored gocovmerge not found, try running 'make setup'..."; exit 1; }
 	$Q go install $(IMPORT_PATH)/vendor/github.com/wadey/gocovmerge
 bin/goimports: .GOPATH/.ok
+	@test -d ./vendor/golang.org/x/tools/cmd/goimports || \
+	    { echo "Vendored goimports not found, try running 'make setup'..."; exit 1; }
 	$Q go install $(IMPORT_PATH)/vendor/golang.org/x/tools/cmd/goimports
 
 # Based on https://github.com/cloudflare/hellogopher - v1.0
