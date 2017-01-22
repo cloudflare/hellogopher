@@ -38,7 +38,7 @@ If you change the `IMPORT_PATH` you have to run `make clean`.
 
 If you don't care about `go get`, for example if the code is **embedded inside some other non-Go codebase**, you can just pick an arbitrary one like `company.com/bigprogram/smallgotool`.
 
-## Vendoring
+### Vendoring
 
 A hellogopher project uses the official Go vendoring style: third-party packages go in `./vendor/`, like `./vendor/github.com/fatih/color`. The Makefile will intentionally ignore your system GOPATH to force you to vendor.
 
@@ -51,7 +51,7 @@ Don't forget to check the vendor folder into your VCS.
 git add vendor/
 ```
 
-## Using editors and other tools
+### Using editors and other tools
 
 All the tools used by the Makefile have been vetted and fixed to work out of the box. However, most other tools (`gometalinter`, `guru`, ...) and editors are very likely not to work unless you place the repository at `$GOPATH/src/$IMPORT_PATH`.
 
@@ -127,6 +127,8 @@ Hellogopher works nicely also if you share a folder between architectures, for e
 ## Tips and FAQ
 
 Don't use **relative imports** (the ones starting with `./`). Just don't. No, really.
+
+**If you get `cannot find package` errors,** read [the Vendoring section](https://github.com/cloudflare/hellogopher/blob/master/README.md#vendoring).
 
 Binary targets are **.PHONY** because hellogopher uses the Go native incremental build support.
 
