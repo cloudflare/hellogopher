@@ -80,6 +80,7 @@ _allpackages = $(shell ( cd $(CURDIR)/.GOPATH/src/$(IMPORT_PATH) && \
 allpackages = $(if $(__allpackages),,$(eval __allpackages := $$(_allpackages)))$(__allpackages)
 
 export GOPATH := $(CURDIR)/.GOPATH
+unexport GOBIN
 
 Q := $(if $V,,@)
 
