@@ -8,11 +8,30 @@ IMPORT_PATH := github.com/FiloSottile/example
 # Space separated patterns of packages to skip in list, test, format.
 IGNORED_PACKAGES := /vendor/
 
+# Will fail if setup has not been ran, and "make cover" or "make format" is used
+ifneq (,$(filter $(MAKECMDGOALS),cover format))
+define check_setup
+	@if ! grep "/.GOPATH" .gitignore > /dev/null 2>&1; then \
+		$(error Please run "make setup" to continue)
+	fi;
+endef
+
+# otherwise just give a warning
+else ifneq ($(MAKECMDGOALS),setup)
+define check_setup
+	@if ! grep "/.GOPATH" .gitignore > /dev/null 2>&1; then \
+		echo -e "WARNING: Full functionality not available without \"make setup\"\n";\
+	fi;
+endef
+endif
+
+
 .PHONY: all
 all: build
 
 .PHONY: build
 build: .GOPATH/.ok
+	$(call check_setup)
 	$Q go install $(if $V,-v) $(VERSION_FLAGS) $(IMPORT_PATH)
 
 ### Code not in the repository root? Another binary? Add to the path like this.
@@ -27,9 +46,11 @@ build: .GOPATH/.ok
 .PHONY: clean test list cover format
 
 clean:
+	$(call check_setup)
 	$Q rm -rf bin .GOPATH
 
 test: .GOPATH/.ok
+	$(call check_setup)
 	$Q go test $(if $V,-v) -i -race $(allpackages) # install -race libs to speed up next run
 ifndef CI
 	$Q go vet $(allpackages)
@@ -42,9 +63,11 @@ else
 endif
 
 list: .GOPATH/.ok
+	$(call check_setup)
 	@echo $(allpackages)
 
 cover: bin/gocovmerge .GOPATH/.ok
+	$(call check_setup)
 	@echo "NOTE: make cover does not exit 1 on failure, don't use it to check for tests success!"
 	$Q rm -f .GOPATH/cover/*.out .GOPATH/cover/all.merged
 	$(if $V,@echo "-- go test -coverpkg=./... -coverprofile=.GOPATH/cover/... ./...")
@@ -65,6 +88,7 @@ endif
 	$Q go tool cover -func .GOPATH/cover/all.merged
 
 format: bin/goimports .GOPATH/.ok
+	$(call check_setup)
 	$Q find .GOPATH/src/$(IMPORT_PATH)/ -iname \*.go | grep -v -e "^$$" $(addprefix -e ,$(IGNORED_PACKAGES)) | xargs ./bin/goimports -w
 
 ##### =====> Internals <===== #####
