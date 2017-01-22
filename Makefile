@@ -93,6 +93,8 @@ allpackages = $(if $(__allpackages),,$(eval __allpackages := $$(_allpackages)))$
 
 export GOPATH := $(CURDIR)/.GOPATH
 
+export GOBIN := $(CURDIR)/bin
+
 Q := $(if $V,,@)
 
 .GOPATH/.ok:
