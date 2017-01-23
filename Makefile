@@ -116,4 +116,4 @@ bin/goimports: .GOPATH/.ok
 	    { echo "Vendored goimports not found, try running 'make setup'..."; exit 1; }
 	$Q go install $(IMPORT_PATH)/vendor/golang.org/x/tools/cmd/goimports
 
-# Based on https://github.com/cloudflare/hellogopher - v1.0
+# Based on https://github.com/cloudflare/hellogopher - v1.1
