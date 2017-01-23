@@ -6,7 +6,8 @@ import (
 	"example.com/hellogopher/subdirs/greetings"
 )
 
-var ( // filled in at build time by the Makefile
+// Version and BuildTime are filled in during build by the Makefile
+var (
 	Version   = "N/A"
 	BuildTime = "N/A"
 )
