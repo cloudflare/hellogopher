@@ -110,6 +110,23 @@ It prints detailed statistics and opens the full HTML report in the browser.
 
 `make format` runs `goimports` on all non-ignored packages.
 
+### Version and build information
+
+`make build` uses `VERSION_FLAGS` which is generated from the build version (git tag and hash) and the time of the build.
+
+For these to be accessible to your Go application you need to include the following in your `main.go`:
+
+```go
+// Version and BuildTime are filled in during build by the Makefile
+var (
+	Version   = "N/A"
+	BuildTime = "N/A"
+)
+```
+
+An example of this can be seen in the [subdirs example](https://github.com/cloudflare/hellogopher/blob/master/_examples/subdirs/cmd/hello/main.go).
+
+
 ### CI mode
 
 CI mode is enabled if the environment variable `CI` is set to 1.
