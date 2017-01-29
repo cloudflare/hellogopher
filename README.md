@@ -181,3 +181,7 @@ The GOPATH is permanent and local, and changes don't need to be synced since it 
 There are a lot of workarounds to make the symlink work, but they all revolve around the fact that `./...` does not traverse the symlink. So instead we first cd into it, and run `go list ./...` from that perspective. Similarly, goimports needs to know that the files are relative to the GOPATH to recognize the vendor folder, so we pass prefixed paths to it.
 
 This is a bit complex, but the idea is that if you use other tools, you'll place the package in the right place in your system GOPATH and not use the symlink trick.  All the work to make the Makefile tools work with symlinks has already been done for you :)
+
+## License
+
+MIT License
