@@ -100,7 +100,7 @@ Q := $(if $V,,@)
 
 .GOPATH/.ok:
 	$Q mkdir -p "$(dir .GOPATH/src/$(IMPORT_PATH))"
-	$Q ln -s ../../../.. ".GOPATH/src/$(IMPORT_PATH)"
+	$Q ln -s `echo $(IMPORT_PATH)|awk -F / '{printf"..";for(i=1;i<=NF;i++)printf"/.."}'` ".GOPATH/src/$(IMPORT_PATH)"
 	$Q mkdir -p .GOPATH/test .GOPATH/cover
 	$Q mkdir -p bin
 	$Q ln -s ../bin .GOPATH/bin
