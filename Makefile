@@ -76,9 +76,8 @@ setup: clean .GOPATH/.ok
 	    echo "/.GOPATH" >> .gitignore; \
 	    echo "/bin" >> .gitignore; \
 	fi
-	go get -u github.com/FiloSottile/gvt
-	- ./bin/gvt fetch golang.org/x/tools/cmd/goimports
-	- ./bin/gvt fetch github.com/wadey/gocovmerge
+	go get -u golang.org/x/tools/cmd/goimports
+	go get -u github.com/wadey/gocovmerge
 
 VERSION          := $(shell git describe --tags --always --dirty="-dev")
 DATE             := $(shell date -u '+%Y-%m-%d-%H%M UTC')
